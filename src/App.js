@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const initialItems = [
   { id: 1, description: "Passports", quantity: 2, packed: false },
   { id: 2, description: "Socks", quantity: 12, packed: false },
@@ -18,14 +20,28 @@ function Logo() {
   return <h1>🌴Far Away🏝️</h1>;
 }
 function Form() {
+  const [description, setDescription] = useState("");
+  const [quantity, setquantity] = useState(1);
+
   function handlesubmit(e) {
     e.preventDefault();
     //----------------------------------------------->to prevent reload
+    if (!description) {
+      return;
+    }
+    const newItem = { description, quantity, packed: false, id: Date.now() };
+
+    setDescription("");
+    setquantity(1);
   }
   return (
     <form className="add-form" onSubmit={handlesubmit}>
       <h3>What do you need for your 😎Trip?</h3>
-      <select>
+      <select
+        value={quantity}
+        onChange={(e) => setquantity(Number(e.target.value))}
+      >
+        {/* ----------------------------------------------->>>>>>> setquantity value is in strin thus converted */}
         {
           /* <option value={1}>1</option>
         <option value={2}>2</option>
@@ -39,7 +55,13 @@ function Form() {
           ))
         }
       </select>
-      <input type="text" placeholder="Items...."></input>
+      <input
+        type="text"
+        placeholder="Items...."
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        // --------------------------------------------------here e.target is the input element and .value is for value entered  ----------------->and e.target.value is always a string
+      ></input>
       <button>Add</button>
     </form>
   );
@@ -73,3 +95,8 @@ function Stats() {
     </footer>
   );
 }
+
+//  controlled ElementInternals
+//  ------define
+//  ----take value
+//  ----update   onchange
