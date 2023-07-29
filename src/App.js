@@ -12,12 +12,16 @@ export default function App() {
   function handleadditems(item) {
     setitems((items) => [...items, item]);
   }
+
+  function handledeleteitems(id) {
+    setitems((items) => items.filter((item) => item.id !== id));
+  }
   //---------------------------------------------->lifting up state
   return (
     <div className="app">
       <Logo />
       <Form onAddItems={handleadditems} />
-      <PackingList items={items} />
+      <PackingList items={items} ondeleteitem={handledeleteitems} />
       <Stats />
     </div>
   );
@@ -74,25 +78,25 @@ function Form({ onAddItems }) {
     </form>
   );
 }
-function PackingList({ items }) {
+function PackingList({ items, ondeleteitem }) {
   return (
     <div className="list">
       <ul>
         {items.map((item) => (
-          <Item item={item} key={item.id} />
+          <Item item={item} key={item.id} ondeleteitem={ondeleteitem} />
           //                                       ----------->there would be a error in console if we dont use a unique  key here
         ))}
       </ul>
     </div>
   );
 }
-function Item({ item }) {
+function Item({ item, ondeleteitem }) {
   return (
     <li>
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
-      <button>❌</button>
+      <button onClick={() => ondeleteitem(item.id)}>❌</button>
     </li>
   );
 }
