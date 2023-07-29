@@ -1,11 +1,5 @@
 import { useState } from "react";
 
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: false },
-  { id: 3, description: "Charger", quantity: 1, packed: true },
-  { id: 4, description: "Laptop", quantity: 1, packed: true },
-];
 export default function App() {
   const [items, setitems] = useState([]);
 
@@ -17,18 +11,32 @@ export default function App() {
     setitems((items) => items.filter((item) => item.id !== id));
   }
   //---------------------------------------------->lifting up state
+
+  function handletoggleitems(id) {
+    setitems((items) =>
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
   return (
     <div className="app">
       <Logo />
       <Form onAddItems={handleadditems} />
-      <PackingList items={items} ondeleteitem={handledeleteitems} />
+      <PackingList
+        items={items}
+        ondeleteitem={handledeleteitems}
+        ontoggleitem={handletoggleitems}
+      />
       <Stats />
     </div>
   );
 }
+
 function Logo() {
   return <h1>🌴Far Away🏝️</h1>;
 }
+
 function Form({ onAddItems }) {
   const [description, setDescription] = useState("");
   const [quantity, setquantity] = useState(1);
@@ -78,21 +86,33 @@ function Form({ onAddItems }) {
     </form>
   );
 }
-function PackingList({ items, ondeleteitem }) {
+
+function PackingList({ items, ondeleteitem, ontoggleitem }) {
   return (
     <div className="list">
       <ul>
         {items.map((item) => (
-          <Item item={item} key={item.id} ondeleteitem={ondeleteitem} />
+          <Item
+            item={item}
+            key={item.id}
+            ondeleteitem={ondeleteitem}
+            ontoggleitem={ontoggleitem}
+          />
           //                                       ----------->there would be a error in console if we dont use a unique  key here
         ))}
       </ul>
     </div>
   );
 }
-function Item({ item, ondeleteitem }) {
+
+function Item({ item, ondeleteitem, ontoggleitem }) {
   return (
     <li>
+      <input
+        type="checkbox"
+        value={item.packed}
+        onChange={() => ontoggleitem(item.id)}
+      ></input>
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
@@ -100,6 +120,7 @@ function Item({ item, ondeleteitem }) {
     </li>
   );
 }
+
 function Stats() {
   return (
     <footer>
