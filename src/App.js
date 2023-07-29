@@ -7,11 +7,17 @@ const initialItems = [
   { id: 4, description: "Laptop", quantity: 1, packed: true },
 ];
 export default function App() {
+  const [items, setitems] = useState([]);
+
+  function handleadditems(item) {
+    setitems((items) => [...items, item]);
+  }
+  //---------------------------------------------->lifting up state
   return (
     <div className="app">
       <Logo />
-      <Form />
-      <PackingList />
+      <Form onAddItems={handleadditems} />
+      <PackingList items={items} />
       <Stats />
     </div>
   );
@@ -19,7 +25,7 @@ export default function App() {
 function Logo() {
   return <h1>🌴Far Away🏝️</h1>;
 }
-function Form() {
+function Form({ onAddItems }) {
   const [description, setDescription] = useState("");
   const [quantity, setquantity] = useState(1);
 
@@ -30,7 +36,9 @@ function Form() {
       return;
     }
     const newItem = { description, quantity, packed: false, id: Date.now() };
+    console.log(newItem);
 
+    onAddItems(newItem);
     setDescription("");
     setquantity(1);
   }
@@ -41,7 +49,7 @@ function Form() {
         value={quantity}
         onChange={(e) => setquantity(Number(e.target.value))}
       >
-        {/* ----------------------------------------------->>>>>>> setquantity value is in strin thus converted */}
+        {/* ----------------------------------------------->>>>>>> setquantity value is in string thus converted */}
         {
           /* <option value={1}>1</option>
         <option value={2}>2</option>
@@ -66,11 +74,11 @@ function Form() {
     </form>
   );
 }
-function PackingList() {
+function PackingList({ items }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => (
+        {items.map((item) => (
           <Item item={item} key={item.id} />
           //                                       ----------->there would be a error in console if we dont use a unique  key here
         ))}
