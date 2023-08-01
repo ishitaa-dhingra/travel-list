@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function App() {
   const [items, setitems] = useState([]);
+  // const numItems = items.length;--------------------->we would not calculate here and pass is as props to stats because we have to calculate three values then we have to pass three values that does not makes sense
 
   function handleadditems(item) {
     setitems((items) => [...items, item]);
@@ -28,7 +29,7 @@ export default function App() {
         ondeleteitem={handledeleteitems}
         ontoggleitem={handletoggleitems}
       />
-      <Stats />
+      <Stats items={items} />
     </div>
   );
 }
@@ -121,10 +122,24 @@ function Item({ item, ondeleteitem, ontoggleitem }) {
   );
 }
 
-function Stats() {
+function Stats({ items }) {
+  if (!items.length)
+    return (
+      <p className="stats">
+        <em>Start adding some items to your Packing List💼</em>
+      </p>
+    );
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed).length;
+  const percentage = Math.round((numPacked / numItems) * 100);
   return (
-    <footer>
-      <em>You have X items on your list,and you already packed X(X%)</em>
+    <footer className="stats">
+      <em>
+        {percentage === 100
+          ? "You got everything !Ready to go✈️"
+          : `You have ${numItems} items on your list,and you already packed
+        ${numPacked}(${percentage}%) items`}
+      </em>
     </footer>
   );
 }
